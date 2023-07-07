@@ -1,7 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import "./index.css";
 
 const ToDo = () => {
+  const [input, setInput] = useState("");
+  const [items, setItems] = useState([]);
+
+  const addItems = () => {
+    if (!input) {
+      alert("Please enter a valid item");
+    } else {
+      setItems([...items, input]);
+    }
+  };
+
   return (
     <>
       <div className="main-div">
@@ -15,8 +26,14 @@ const ToDo = () => {
               className="form-control"
               type="text"
               placeholder="Add Items"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
             />
-            <i className="fa fa-plus add-btn" aria-hidden="true"></i>
+            <i
+              className="fa fa-plus add-btn"
+              aria-hidden="true"
+              onClick={addItems}
+            ></i>
           </div>
 
           <div className="showItems">
