@@ -5,14 +5,35 @@ const ToDo = () => {
   const [input, setInput] = useState("");
   const [items, setItems] = useState([]);
 
+  const enter = (e) => {
+    if (e.keyCode === 13) {
+      addItems();
+    }
+  };
+
   const addItems = () => {
     if (!input) {
       alert("Please enter a valid item");
     } else {
-      setItems([...items, input]);
+      const newInput = {
+        id: new Date().getTime().toString(),
+        name: input,
+      };
+      setItems([...items, newInput]);
+      setInput("");
     }
   };
 
+  const removeAll = () => {
+    setItems([]);
+  };
+
+  const deleteItem = (index) => {
+    const selectedItem = items.filter((currElem) => {
+      return currElem.id !== index;
+    });
+    setItems(selectedItem);
+  };
   return (
     <>
       <div className="main-div">
@@ -27,6 +48,7 @@ const ToDo = () => {
               type="text"
               placeholder="Add Items"
               value={input}
+              onKeyDown={enter}
               onChange={(e) => setInput(e.target.value)}
             />
             <i
@@ -37,17 +59,29 @@ const ToDo = () => {
           </div>
 
           <div className="showItems">
-            <div className="eachItem">
-              <h3>Mango</h3>
-              <div className="todo-btn">
-                <i className="far fa-edit add-btn" aria-hidden="true"></i>
-                <i className="far fa-trash-alt add-btn" aria-hidden="true"></i>
-              </div>
-            </div>
+            {items.map((currElem, index) => {
+              return (
+                <div className="eachItem" key={index}>
+                  <h3>{currElem.name}</h3>
+                  <div className="todo-btn">
+                    <i className="far fa-edit add-btn" aria-hidden="true"></i>
+                    <i
+                      className="far fa-trash-alt add-btn"
+                      aria-hidden="true"
+                      onClick={() => deleteItem(currElem.id)}
+                    ></i>
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
           <div className="showItems">
-            <button className="btn effect04" data-sm-link-text="Remove All">
+            <button
+              className="btn effect04"
+              data-sm-link-text="Remove All"
+              onClick={removeAll}
+            >
               <span>Check List</span>
             </button>
           </div>
