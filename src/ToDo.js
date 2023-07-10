@@ -1,9 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./index.css";
+
+const getData = () => {
+  const lists = localStorage.getItem("toDo");
+  if (lists) {
+    return JSON.parse(lists);
+  } else {
+    return [];
+  }
+};
 
 const ToDo = () => {
   const [input, setInput] = useState("");
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState(getData());
 
   const enter = (e) => {
     if (e.keyCode === 13) {
@@ -34,6 +43,11 @@ const ToDo = () => {
     });
     setItems(selectedItem);
   };
+
+  useEffect(() => {
+    localStorage.setItem("toDo", JSON.stringify(items));
+  }, [items]);
+
   return (
     <>
       <div className="main-div">
@@ -59,9 +73,9 @@ const ToDo = () => {
           </div>
 
           <div className="showItems">
-            {items.map((currElem, index) => {
+            {items.map((currElem) => {
               return (
-                <div className="eachItem" key={index}>
+                <div className="eachItem" key={currElem.id}>
                   <h3>{currElem.name}</h3>
                   <div className="todo-btn">
                     <i className="far fa-edit add-btn" aria-hidden="true"></i>
