@@ -13,6 +13,8 @@ const getData = () => {
 const ToDo = () => {
   const [input, setInput] = useState("");
   const [items, setItems] = useState(getData());
+  const [isUpdate, setIsUpdate] = useState("");
+  const [toggleBtn, setToggleBtn] = useState(false);
 
   const enter = (e) => {
     if (e.keyCode === 13) {
@@ -23,6 +25,18 @@ const ToDo = () => {
   const addItems = () => {
     if (!input) {
       alert("Please enter a valid item");
+    } else if (input && toggleBtn) {
+      setItems(
+        items.map((currElem) => {
+          if (currElem.id === isUpdate) {
+            return { ...currElem, name: input };
+          }
+          return currElem;
+        })
+      );
+      setIsUpdate("");
+      setInput("");
+      setToggleBtn(false);
     } else {
       const newInput = {
         id: new Date().getTime().toString(),
@@ -48,6 +62,15 @@ const ToDo = () => {
     localStorage.setItem("toDo", JSON.stringify(items));
   }, [items]);
 
+  const updateItem = (index) => {
+    const updatedList = items.find((currElem) => {
+      return currElem.id === index;
+    });
+    setIsUpdate(index);
+    setInput(updatedList.name);
+    setToggleBtn(true);
+  };
+
   return (
     <>
       <div className="main-div">
@@ -65,11 +88,19 @@ const ToDo = () => {
               onKeyDown={enter}
               onChange={(e) => setInput(e.target.value)}
             />
-            <i
-              className="fa fa-plus add-btn"
-              aria-hidden="true"
-              onClick={addItems}
-            ></i>
+            {toggleBtn ? (
+              <i
+                className="far fa-edit add-btn"
+                aria-hidden="true"
+                onClick={addItems}
+              ></i>
+            ) : (
+              <i
+                className="fa fa-plus add-btn"
+                aria-hidden="true"
+                onClick={addItems}
+              ></i>
+            )}
           </div>
 
           <div className="showItems">
@@ -78,7 +109,11 @@ const ToDo = () => {
                 <div className="eachItem" key={currElem.id}>
                   <h3>{currElem.name}</h3>
                   <div className="todo-btn">
-                    <i className="far fa-edit add-btn" aria-hidden="true"></i>
+                    <i
+                      className="far fa-edit add-btn"
+                      aria-hidden="true"
+                      onClick={() => updateItem(currElem.id)}
+                    ></i>
                     <i
                       className="far fa-trash-alt add-btn"
                       aria-hidden="true"
